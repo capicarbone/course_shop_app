@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class CartItem {
-  final String id;
+  final String id;  
   final String title;
   final int quantity;
   final double price;
@@ -48,6 +48,11 @@ class Cart with ChangeNotifier {
               ));
     }
 
+    notifyListeners();
+  }
+
+  void removeItem(String productId) {
+    _items.remove(productId);
     notifyListeners();
   }
 }
