@@ -41,7 +41,6 @@ class Products with ChangeNotifier {
   var _showFavoritesOnly = false;
 
   List<Product> get items {
-   
     return [..._items];
   }
 
@@ -53,8 +52,15 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  void addProduct() {
+  void addProduct(Product product) {
+    final newProduct = Product(
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        id: DateTime.now().toString());
 
+        _items.insert(0, newProduct);
     notifyListeners();
   }
 }
