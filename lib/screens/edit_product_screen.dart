@@ -77,7 +77,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     var productsData = Provider.of<Products>(context);
     if (_editedProduct.id != null) {
       // Editing
-      productsData.updateProduct(_editedProduct.id, _editedProduct);
+      await productsData.updateProduct(_editedProduct.id, _editedProduct);
     } else {
       try {
         await productsData.addProduct(_editedProduct);
@@ -97,13 +97,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
-      }
+      } 
     }
+
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 
   @override
