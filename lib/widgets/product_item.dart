@@ -6,9 +6,9 @@ import '../providers/cart.dart';
 
 class ProductItem extends StatelessWidget {
   @override
-  Widget build(BuildContext context) { 
-
-    final cart = Provider.of<Cart>(context, listen: false);   
+  Widget build(BuildContext context) {
+    final cart = Provider.of<Cart>(context, listen: false);
+    final scaffold = Scaffold.of(context);
 
     return Consumer<Product>(
       builder: (ctx, product, child) {
@@ -32,8 +32,16 @@ class ProductItem extends StatelessWidget {
                     ? Icons.favorite
                     : Icons.favorite_border),
                 color: Theme.of(context).accentColor,
-                onPressed: () {
-                  product.toggleFavoriteStatus();
+                onPressed: () async {
+                  await product.toggleFavoriteStatus().catchError((error) {
+                    print(error);
+                    scaffold.showSnackBar(SnackBar(
+                      content: Text(
+                        'Favorite marking failed.',
+                        textAlign: TextAlign.center,
+                      ),
+                    ));
+                  });
                 },
               ),
               title: Text(
@@ -49,9 +57,12 @@ class ProductItem extends StatelessWidget {
                   Scaffold.of(context).showSnackBar(SnackBar(
                     content: Text('Added item to cart!'),
                     duration: Duration(seconds: 1),
-                    action: SnackBarAction(label: 'UNDO', onPressed: () {
-                      cart.removeSingleItem(product.id);
-                    },),
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      onPressed: () {
+                        cart.removeSingleItem(product.id);
+                      },
+                    ),
                   ));
                 },
               ),
