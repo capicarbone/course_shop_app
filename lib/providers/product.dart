@@ -19,19 +19,23 @@ class Product extends ChangeNotifier {
       @required this.price,
       @required this.imageUrl,
       this.isFavorite = false});
+      
+
+  void _setFavoriteValue(bool value) {
+    isFavorite = value;
+    notifyListeners();
+  }
 
   Future<void> toggleFavoriteStatus() async {
     final url = 'https://shop-app-67cec.firebaseio.com/products/$id.json';
-    isFavorite = !isFavorite;
-    notifyListeners();
+    _setFavoriteValue(!isFavorite);    
   
     final response = await http.patch(url, body: json.encode( {
       'isFavorite' : isFavorite
     }));  
 
     if (response.statusCode >= 400){                      
-      isFavorite = !isFavorite;
-      notifyListeners();
+      _setFavoriteValue(!isFavorite);
       throw HttpException('Record could not modified');
     }      
     

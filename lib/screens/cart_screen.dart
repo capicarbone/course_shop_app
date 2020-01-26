@@ -5,12 +5,21 @@ import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
 import '../providers/orders.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
+
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  var _isSaving = false;
 
   @override
   Widget build(BuildContext context) {
     var cartData = Provider.of<Cart>(context);
+    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Cart'),
@@ -38,15 +47,36 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    child: Text('Order Now'),
-                    onPressed: () {
-                      Provider.of<Orders>(context, listen: false).addOrder(
-                          cartData.items.values.toList(), cartData.totalAmount);
-                      cartData.clear();
-                    },
-                    textColor: Theme.of(context).primaryColor,
-                  )
+                  _isSaving
+                      ? Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          width: 100,
+                        )
+                      : FlatButton(
+                          child: Text('Order Now'),
+                          onPressed: () async {
+                            setState(() {
+                              _isSaving = true;
+                            });
+
+                            try {
+                              await Provider.of<Orders>(context, listen: false)
+                                  .addOrder(cartData.items.values.toList(),
+                                      cartData.totalAmount);
+
+                              cartData.clear();
+                            } catch (error) {
+                              print(error);
+                            }
+
+                            setState(() {
+                              _isSaving = false;
+                            });
+                          },
+                          textColor: Theme.of(context).primaryColor,
+                        )
                 ],
               ),
             ),
