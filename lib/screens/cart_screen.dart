@@ -5,20 +5,12 @@ import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
 import '../providers/orders.dart';
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
-
-  @override
-  _CartScreenState createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  var _isSaving = false;
 
   @override
   Widget build(BuildContext context) {
     var cartData = Provider.of<Cart>(context);
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -47,36 +39,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  _isSaving
-                      ? Container(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          width: 100,
-                        )
-                      : FlatButton(
-                          child: Text('Order Now'),
-                          onPressed: () async {
-                            setState(() {
-                              _isSaving = true;
-                            });
-
-                            try {
-                              await Provider.of<Orders>(context, listen: false)
-                                  .addOrder(cartData.items.values.toList(),
-                                      cartData.totalAmount);
-
-                              cartData.clear();
-                            } catch (error) {
-                              print(error);
-                            }
-
-                            setState(() {
-                              _isSaving = false;
-                            });
-                          },
-                          textColor: Theme.of(context).primaryColor,
-                        )
+                  OderButton(cartData: cartData)
                 ],
               ),
             ),
@@ -101,6 +64,52 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class OderButton extends StatefulWidget {
+  const OderButton({
+    Key key,
+    @required this.cartData,
+  }) : super(key: key);
+
+  final Cart cartData;
+
+  @override
+  _OderButtonState createState() => _OderButtonState();
+}
+
+class _OderButtonState extends State<OderButton> {
+  var _isSaving = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isSaving ? CircularProgressIndicator() : Text('Order Now'),
+      onPressed: (widget.cartData.totalAmount <= 0 || _isSaving)
+          ? null
+          : () async {
+              setState(() {
+                _isSaving = true;
+              });
+
+              try {
+                await Provider.of<Orders>(context, listen: false).addOrder(
+                    widget.cartData.items.values.toList(),
+                    widget.cartData.totalAmount);
+                widget.cartData.clear();
+                Navigator.of(context).pop();
+              } catch (error) {
+                Scaffold.of(context).showSnackBar(SnackBar(content: Text('Order creation failed.'),));
+                print(error);
+              }
+
+              setState(() {
+                _isSaving = false;
+              });
+            },
+      textColor: Theme.of(context).primaryColor,
     );
   }
 }
