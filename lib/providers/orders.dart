@@ -34,16 +34,20 @@ class Orders with ChangeNotifier {
 
     print(data);
 
+    if (data == null ) {
+      return;
+    }
+
     data.forEach((id, values) {
       var products = values['products'] as List<dynamic>;
       var order = OrderItem(
         id: id,
         amount: values['amount'],
-        dateTime: DateTime.now(),
+        dateTime: DateTime.parse(values['dateTime']),
         products: products
             .map(
               (pValues) => CartItem(
-                  id: DateTime.now().toString(),
+                  id: pValues['id'],
                   price: pValues['price'],
                   title: pValues['title'],
                   quantity: pValues['quantity']),
@@ -54,6 +58,7 @@ class Orders with ChangeNotifier {
       _orders.add(order);      
     });
 
+    _orders = _orders.reversed.toList();
     notifyListeners();
   }
 

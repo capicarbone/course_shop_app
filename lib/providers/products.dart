@@ -97,6 +97,10 @@ class Products with ChangeNotifier {
 
       var data = json.decode(response.body);
       print(data);
+
+      if (data == null ) {
+        return;
+      }
       final newProduct = Product(
           title: product.title,
           description: product.description,

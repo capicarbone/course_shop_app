@@ -12,27 +12,22 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  var _isInit = true;
-  var _isLoading = false;
+
+  var _isLoading = true;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();    
-
-    if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
+  void initState() {    
+    super.initState();
+    Future.delayed(Duration.zero).then((_) {
 
       Provider.of<Orders>(context).fetchOrders().then((_) {
         setState(() {
           _isLoading = false;
         });
       });
-
-      _isInit = false;
-    }
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
