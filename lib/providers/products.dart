@@ -41,6 +41,10 @@ class Products with ChangeNotifier {
     ), */
   ];
 
+  String authToken = null;
+
+  Products();
+
   var _showFavoritesOnly = false;
 
   List<Product> get items {
@@ -56,7 +60,12 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    const url = 'https://shop-app-67cec.firebaseio.com/products.json';
+    
+    if (authToken == null) {
+      return null;
+    }
+
+    final url = 'https://shop-app-67cec.firebaseio.com/products.json?auth=$authToken';
 
     try {
       final response = await http.get(url);
