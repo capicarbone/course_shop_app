@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../screens/product_details_screen.dart';
 import '../providers/cart.dart';
+import '../providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context, listen: false);
     final scaffold = Scaffold.of(context);
+    final authData = Provider.of<Auth>(context, listen: false);
 
     return Consumer<Product>(
       builder: (ctx, product, child) {
@@ -33,7 +35,7 @@ class ProductItem extends StatelessWidget {
                     : Icons.favorite_border),
                 color: Theme.of(context).accentColor,
                 onPressed: () async {
-                  await product.toggleFavoriteStatus().catchError((error) {
+                  await product.toggleFavoriteStatus(authData.token, authData.userId).catchError((error) {
                     print(error);
                     scaffold.showSnackBar(SnackBar(
                       content: Text(

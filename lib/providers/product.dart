@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shop_app/models/http_exception.dart';
 
 
+
 class Product extends ChangeNotifier {
   final String id;
   final String title;
@@ -26,13 +27,14 @@ class Product extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
-    final url = 'https://shop-app-67cec.firebaseio.com/products/$id.json';
+  Future<void> toggleFavoriteStatus(String token, String userId) async {
+    final url = 'https://shop-app-67cec.firebaseio.com/userFavorites/$userId/$id.json?auth=$token';
+    
     _setFavoriteValue(!isFavorite);    
   
-    final response = await http.patch(url, body: json.encode( {
-      'isFavorite' : isFavorite
-    }));  
+    final response = await http.put(url, body: json.encode(
+      isFavorite
+    ));  
 
     if (response.statusCode >= 400){                      
       _setFavoriteValue(!isFavorite);

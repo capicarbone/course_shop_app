@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
           create: (_) => Products(),
           update: (ctx, auth, products) {
             products.authToken = auth.token;
+            products.userId = auth.userId;
             products.fetchAndSetProducts();
             return products;
           },
