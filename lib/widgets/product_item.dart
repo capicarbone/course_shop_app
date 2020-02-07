@@ -18,15 +18,21 @@ class ProductItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           child: GridTile(
             child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
-                    arguments: product.id);
-              },
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
+                onTap: () {
+                  Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
+                      arguments: product.id);
+                },
+                child: Hero(
+                  tag: product.id,
+                  child: FadeInImage(
+                    placeholder:
+                        AssetImage('assets/images/product-placeholder.png'),
+                    image: NetworkImage(
+                      product.imageUrl,
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                )),
             footer: GridTileBar(
               backgroundColor: Colors.black87,
               leading: IconButton(
@@ -35,7 +41,9 @@ class ProductItem extends StatelessWidget {
                     : Icons.favorite_border),
                 color: Theme.of(context).accentColor,
                 onPressed: () async {
-                  await product.toggleFavoriteStatus(authData.token, authData.userId).catchError((error) {
+                  await product
+                      .toggleFavoriteStatus(authData.token, authData.userId)
+                      .catchError((error) {
                     print(error);
                     scaffold.showSnackBar(SnackBar(
                       content: Text(
