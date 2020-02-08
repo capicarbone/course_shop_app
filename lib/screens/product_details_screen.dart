@@ -13,22 +13,26 @@ class ProductDetailScreen extends StatelessWidget {
         Provider.of<Products>(context, listen: false).findById(productId);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loadedProduct.title),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Hero(
+      // appBar: AppBar(
+      //   title: Text(loadedProduct.title),
+      // ),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+              expandedHeight: 300,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(loadedProduct.title),
+                background: Hero(
                   tag: loadedProduct.id,
                   child: Image.network(
                     loadedProduct.imageUrl,
                     fit: BoxFit.cover,
-                  )),
-            ),
+                  ),
+                ),
+              )),
+          SliverList(
+              delegate: SliverChildListDelegate([
             SizedBox(
               width: 10,
             ),
@@ -40,15 +44,17 @@ class ProductDetailScreen extends StatelessWidget {
               height: 10,
             ),
             Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: Text(
-                  loadedProduct.description,
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                ))
-          ],
-        ),
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Text(
+                loadedProduct.description,
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            ),
+            SizedBox(height: 800,),
+          ]))
+        ],
       ),
     );
   }
